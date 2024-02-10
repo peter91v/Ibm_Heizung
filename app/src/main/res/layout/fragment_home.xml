@@ -6,29 +6,56 @@
     android:layout_height="match_parent"
     tools:context=".ui.home.HomeFragment">
 
-    <LinearLayout
-        android:layout_width="409dp"
-        android:layout_height="729dp"
-        android:layout_marginStart="1dp"
-        android:layout_marginTop="1dp"
-        android:layout_marginEnd="1dp"
-        android:layout_marginBottom="1dp"
-        android:orientation="vertical"
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@string/menu_home"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/fragmentContainerView11"
-            android:name="com.example.ibm_heizung.ui.erdgeschoss.ErgeschossFragment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="1dp"
+            android:layout_marginTop="1dp"
+            android:layout_marginEnd="1dp"
+            android:layout_marginBottom="1dp"
+            android:orientation="vertical">
 
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/fragmentContainerView12"
-            android:name="com.example.ibm_heizung.ui.obergeschoss.ObergeschossFragment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/fragmentContainerView13"
+                android:name="com.example.ibm_heizung.ui.haus.HausFragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp" />
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/fragmentContainerErgeschossFragment"
+                android:name="com.example.ibm_heizung.ui.erdgeschoss.ErgeschossFragment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                tools:layout="@layout/fragment_erdgeschoss" />
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/fragmentContainerObergeschossFragment"
+                android:name="com.example.ibm_heizung.ui.obergeschoss.ObergeschossFragment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                tools:layout="@layout/fragment_obergeschoss" />
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/fragmentContainerView14"
+                android:name="com.example.ibm_heizung.ui.untergeschoss.UntergeschossFragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp" />
+
+        </LinearLayout>
+    </ScrollView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

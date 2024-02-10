@@ -10,4 +10,7 @@
     <color name="mdlcolortextbluegrey400">#78909c</color>
     <color name="bluegray800">#37474f</color>
     <color name="bluegray900">#263238</color>
+    <color name="sensor">#C8380B</color>
+    <color name="sensorluft">#0B1E9B</color>
+    <color name="sensorBoden">#2E660B</color>
 </resources>

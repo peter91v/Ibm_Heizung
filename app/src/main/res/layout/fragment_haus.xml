@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.obergeschoss.ObergeschossFragment">
+    tools:context=".ui.haus.HausFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -31,7 +31,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:lineSpacingMultiplier="1"
-                    android:text="@string/obergeschoss"
+                    android:text="@string/haus"
                     android:textAlignment="viewStart"
                     android:textColor="?android:attr/textColorPrimary"
                     android:textColorHighlight="?attr/colorControlHighlight"
@@ -46,11 +46,11 @@
                 <ImageView
                     android:id="@+id/imgVHaus"
                     android:layout_width="wrap_content"
-                    android:layout_height="395dp"
+                    android:layout_height="226dp"
                     android:layout_marginStart="2dp"
                     android:layout_marginEnd="2dp"
                     android:importantForAccessibility="no"
-                    android:src="@drawable/og_neu"
+                    android:src="@drawable/haus"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
@@ -59,88 +59,62 @@
                     app:layout_constraintVertical_bias="0.0" />
 
                 <TextView
-                    android:id="@+id/lblTempOGWohnzimmer"
+                    android:id="@+id/lblTempDach"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@color/sensor"
+                    android:background="@color/sensorluft"
                     android:text="@string/nan"
                     android:textColor="@color/white"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintBottom_toBottomOf="@+id/imgVHaus"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.2"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/title"
-                    app:layout_constraintVertical_bias="0.20000002" />
-                <TextView
-                    android:id="@+id/lblTempOGBuero"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@color/sensor"
-                    android:text="@string/nan"
-                    android:textColor="@color/white"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.2"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/title"
-                    app:layout_constraintVertical_bias="0.45000002" />
+                    app:layout_constraintHorizontal_bias="0.72"
+                    app:layout_constraintStart_toStartOf="@+id/imgVHaus"
+                    app:layout_constraintTop_toTopOf="@+id/imgVHaus"
+                    app:layout_constraintVertical_bias="0.050000012" />
 
                 <TextView
-                    android:id="@+id/lblTempEGSchlafzimmer"
+                    android:id="@+id/lblTempSolar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@color/sensor"
+                    android:background="@color/sensorluft"
                     android:text="@string/nan"
                     android:textColor="@color/white"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintBottom_toBottomOf="@+id/imgVHaus"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.2"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/title"
+                    app:layout_constraintHorizontal_bias="0.45"
+                    app:layout_constraintStart_toStartOf="@+id/imgVHaus"
+                    app:layout_constraintTop_toTopOf="@+id/imgVHaus"
+                    app:layout_constraintVertical_bias="0.050000012" />
+
+                <TextView
+                    android:id="@+id/lblTempSued"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@color/sensorluft"
+                    android:text="@string/nan"
+                    android:textColor="@color/white"
+                    app:layout_constraintBottom_toBottomOf="@+id/imgVHaus"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.05"
+                    app:layout_constraintStart_toStartOf="@+id/imgVHaus"
+                    app:layout_constraintTop_toTopOf="@+id/imgVHaus"
                     app:layout_constraintVertical_bias="0.75" />
 
                 <TextView
-                    android:id="@+id/lblTempEGKuecheBoden"
+                    android:id="@+id/lblTempNord"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@color/sensor"
+                    android:background="@color/sensorluft"
                     android:text="@string/nan"
                     android:textColor="@color/white"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintBottom_toBottomOf="@+id/imgVHaus"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.7"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/title"
-                    app:layout_constraintVertical_bias="0.39999998" />
+                    app:layout_constraintHorizontal_bias="0.8"
+                    app:layout_constraintStart_toStartOf="@+id/imgVHaus"
+                    app:layout_constraintTop_toTopOf="@+id/imgVHaus"
+                    app:layout_constraintVertical_bias="0.75" />
 
-                <TextView
-                    android:id="@+id/lblTempEGGangBoden"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@color/sensor"
-                    android:text="@string/nan"
-                    android:textColor="@color/white"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/title"
-                    app:layout_constraintVertical_bias="0.7" />
-
-                <TextView
-                    android:id="@+id/lblTempEGGang"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@color/sensorBoden"
-                    android:text="@string/nan"
-                    android:textColor="@color/white"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.7"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/title"
-                    app:layout_constraintVertical_bias="0.8" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </FrameLayout>
