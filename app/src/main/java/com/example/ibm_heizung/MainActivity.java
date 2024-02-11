@@ -1,6 +1,8 @@
 package com.example.ibm_heizung;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -9,6 +11,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
@@ -23,8 +27,12 @@ import com.example.ibm_heizung.classes.ViewDataController;
 import com.example.ibm_heizung.databinding.ActivityMainBinding;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,6 +43,9 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     private Map<String, Sensor> dataMap;
     private RestService restService;
 
+    private SharedPreferences sharedPreferences;
+    private static final String SHARED_PREFS_NAME = "MyAppPrefs";
+    private static final String SENSOR_DATA_KEY = "SensorData";
     private List<Sensor> SensorList;
     private ViewDataController viewDataController;
     public List<Sensor> getSensorList() {
@@ -71,7 +82,13 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         viewDataController = new ViewDataController();
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setOnRefreshListener(this);
-        FetchData();
+        sharedPreferences = getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+
+        // Laden der gespeicherten Daten
+        loadData();
+        if (dataMap.isEmpty()) {
+            FetchData();
+        }
         binding.appBarMain.fab.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -116,6 +133,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                 dataMap = result;
                 if (!dataMap.isEmpty()) {
                     SensorList = new ArrayList<>(dataMap.values());
+                    saveData();
                     viewDataController.setDataMap(dataMap);
                     // Aktualisieren Sie die TextViews in der MainActivity
                     viewDataController.updateSensorViews(MainActivity.this);
@@ -127,7 +145,25 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             }
         });
     }
+    private void saveData() {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(dataMap);
+        editor.putString(SENSOR_DATA_KEY, json);
+        editor.apply();
+    }
 
+    private void loadData() {
+        Gson gson = new Gson();
+        String json = sharedPreferences.getString(SENSOR_DATA_KEY, "");
+        Type type = new TypeToken<HashMap<String, Sensor>>(){}.getType();
+        dataMap = gson.fromJson(json, type);
+        if (dataMap == null) {
+            dataMap = new HashMap<>();
+        }
+        viewDataController.setDataMap(dataMap);
+        viewDataController.updateSensorViews(MainActivity.this);
+    }
     private boolean isScrollingUp() {
         // Überprüfen, ob der Bildschirm nach oben gescrollt wurde
         View child = binding.navView.getChildAt(0);
@@ -135,5 +171,11 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             return child.getScrollY() > 0;
         }
         return false;
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Hier die Datenaktualisierung durchführen, z.B. fetchData()
+
     }
 }

@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.example.ibm_heizung.R;
 import com.example.ibm_heizung.classes.Sensor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SensorRecyclerViewAdapter extends RecyclerView.Adapter<SensorRecyclerViewAdapter.ViewHolder> {
@@ -22,7 +23,11 @@ public class SensorRecyclerViewAdapter extends RecyclerView.Adapter<SensorRecycl
 
     public SensorRecyclerViewAdapter(Context context, List<Sensor> sensorList) {
         this.context = context;
-        this.sensorList = sensorList;
+        if (sensorList != null) {
+            this.sensorList = new ArrayList<>(sensorList);
+        } else {
+            this.sensorList = new ArrayList<>(); // Stelle sicher, dass die Liste initialisiert wird, auch wenn sie null ist
+        }
     }
 
     @NonNull

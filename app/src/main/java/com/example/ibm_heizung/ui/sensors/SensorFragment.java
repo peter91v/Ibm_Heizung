@@ -12,22 +12,16 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.ibm_heizung.MainActivity;
-import com.example.ibm_heizung.R;
 import com.example.ibm_heizung.SensorListActivity;
+import com.example.ibm_heizung.R;
 import com.example.ibm_heizung.classes.Sensor;
-import com.example.ibm_heizung.placeholder.PlaceholderContent;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-/**
- * A fragment representing a list of Sensors.
- */
 public class SensorFragment extends Fragment {
 
-    // Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
-    // Parameter
     private int mColumnCount = 1;
 
     public SensorFragment() {
