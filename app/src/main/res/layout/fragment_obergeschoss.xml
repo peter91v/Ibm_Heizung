@@ -86,7 +86,7 @@
                     app:layout_constraintVertical_bias="0.45000002" />
 
                 <TextView
-                    android:id="@+id/lblTempEGSchlafzimmer"
+                    android:id="@+id/lblTempOGSchlafzimmer"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@color/sensor"
@@ -100,7 +100,7 @@
                     app:layout_constraintVertical_bias="0.75" />
 
                 <TextView
-                    android:id="@+id/lblTempEGKuecheBoden"
+                    android:id="@+id/lblTempOGKueche"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@color/sensor"
@@ -114,7 +114,7 @@
                     app:layout_constraintVertical_bias="0.39999998" />
 
                 <TextView
-                    android:id="@+id/lblTempEGGangBoden"
+                    android:id="@+id/lblTempOGGang"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@color/sensor"
@@ -127,7 +127,7 @@
                     app:layout_constraintVertical_bias="0.7" />
 
                 <TextView
-                    android:id="@+id/lblTempEGGang"
+                    android:id="@+id/lblTempOGBadBoden"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@color/sensorBoden"

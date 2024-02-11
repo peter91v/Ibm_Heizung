@@ -18,4 +18,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="haus">Haus</string>
     <string name="untergeschoss">Untergeschoss</string>
+    <string name="sensordata_Loaded">Sensordaten wurden geladen</string>
+    <string name="sensordata_not_Loaded">sensordaten konten nicht geladen werden!</string>
+    <string name="sensors">Sensors</string>
 </resources>
