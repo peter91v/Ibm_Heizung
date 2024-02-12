@@ -1,5 +1,6 @@
 package com.example.ibm_heizung.ui.sensors;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import com.example.ibm_heizung.MainActivity;
 import com.example.ibm_heizung.SensorListActivity;
 import com.example.ibm_heizung.R;
 import com.example.ibm_heizung.classes.Sensor;
+import com.example.ibm_heizung.databinding.FragmentHomeBinding;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +28,10 @@ public class SensorFragment extends Fragment {
 
     public SensorFragment() {
     }
+    private RecyclerView recyclerView;
+    private SensorRecyclerViewAdapter adapter;
 
+    private FragmentHomeBinding binding;
     // Parameter initialization
     @SuppressWarnings("unused")
     public static SensorFragment newInstance(int columnCount) {
@@ -52,7 +57,7 @@ public class SensorFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_sensor_list, container, false);
 
         // Set up the RecyclerView
-        RecyclerView recyclerView = view.findViewById(R.id.sensorlist);
+        recyclerView = view.findViewById(R.id.sensorlist);
 
         // Check if the RecyclerView exists
         if (recyclerView != null) {
@@ -65,12 +70,38 @@ public class SensorFragment extends Fragment {
             MainActivity mainActivity = (MainActivity) getActivity();
             assert mainActivity != null;
             List<Sensor> sensorList = mainActivity.getSensorList();
+
             // Replace PlaceholderContent.ITEMS with your actual data map from SensorListActivity
             // Here, assuming you have a member variable sensorList in SensorListActivity
-            SensorRecyclerViewAdapter adapter = new SensorRecyclerViewAdapter(context, sensorList);
+            adapter = new SensorRecyclerViewAdapter(getContext(), sensorList);
             recyclerView.setAdapter(adapter);
+            // LayoutManager einstellen
+            recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         }
-
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Überprüfen, ob die MainActivity ist und casten
+        if (getActivity() instanceof MainActivity) {
+            MainActivity mainActivity = (MainActivity) getActivity();
+            // Daten neu laden
+            mainActivity.checkDataValidityAndLoadIfNeeded();
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
+    @SuppressLint("NotifyDataSetChanged")
+    public void updateAdapterData(List<Sensor> sensorList) {
+        if (adapter != null) {
+        adapter.setData(sensorList);
+        adapter.notifyDataSetChanged();
+    }
     }
 }

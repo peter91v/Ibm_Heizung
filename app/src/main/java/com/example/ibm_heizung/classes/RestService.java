@@ -1,9 +1,11 @@
 package com.example.ibm_heizung.classes;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -29,7 +31,6 @@ public class RestService extends Service {
         apiService = retrofit.create(ApiService.class);
     }
 
-    // Methode zum Abrufen von Daten vom Server und Verwendung des JsonParser
     public void fetchDataFromServer(DataCallback callback) {
         final Map<String, Sensor> dataMap = new HashMap<>();
         Call<Map<String, Sensor>> call = apiService.getSensorDataFromServer();
@@ -38,7 +39,7 @@ public class RestService extends Service {
             public void onResponse(@NonNull Call<Map<String, Sensor>> call, @NonNull Response<Map<String, Sensor>> response) {
                 if (response.isSuccessful()) {
                     Map<String, Sensor> dataMap = response.body();
-                    callback.onDataReceived(dataMap); // Aufruf des Callbacks mit den empfangenen Daten
+                    callback.onDataReceived(dataMap);
                 } else {
                     Log.e("RestService", "Unsuccessful response: " + response.code());
                 }
@@ -73,7 +74,6 @@ public class RestService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
         throw new UnsupportedOperationException("Not yet implemented");
     }
 

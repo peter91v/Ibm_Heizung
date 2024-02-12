@@ -14,9 +14,14 @@ import com.example.ibm_heizung.R;
 import com.example.ibm_heizung.classes.Sensor;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class SensorRecyclerViewAdapter extends RecyclerView.Adapter<SensorRecyclerViewAdapter.ViewHolder> {
+
+    public List<Sensor> getSensorList() {
+        return sensorList;
+    }
 
     private List<Sensor> sensorList;
     private Context context;
@@ -24,7 +29,8 @@ public class SensorRecyclerViewAdapter extends RecyclerView.Adapter<SensorRecycl
     public SensorRecyclerViewAdapter(Context context, List<Sensor> sensorList) {
         this.context = context;
         if (sensorList != null) {
-            this.sensorList = new ArrayList<>(sensorList);
+            this.sensorList = sensorList;
+            filterSensorList(this.sensorList);
         } else {
             this.sensorList = new ArrayList<>(); // Stelle sicher, dass die Liste initialisiert wird, auch wenn sie null ist
         }
@@ -39,7 +45,7 @@ public class SensorRecyclerViewAdapter extends RecyclerView.Adapter<SensorRecycl
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        if (sensorList != null && position < sensorList.size()) {
+        if (position < sensorList.size()) {
             Sensor sensor = sensorList.get(position);
 
             // Ändern Sie die Hintergrundfarbe basierend auf der Position
@@ -50,7 +56,8 @@ public class SensorRecyclerViewAdapter extends RecyclerView.Adapter<SensorRecycl
                 // Ungerade Positionen
                 holder.itemView.setBackgroundColor(ContextCompat.getColor(context, com.google.android.material.R.color.material_dynamic_secondary10));
             }
-            if (sensor != null) {
+            assert sensor != null;
+            if ((sensor != null) & (!sensor.getZeit().isEmpty()) | (sensor.getCode() != 0)){
                 holder.txtSensorId.setText(String.valueOf(sensor.getCode()));
                 holder.txtText.setText(String.valueOf(sensor.getText()));
                 holder.txtZeit.setText(sensor.getZeit());
@@ -64,10 +71,22 @@ public class SensorRecyclerViewAdapter extends RecyclerView.Adapter<SensorRecycl
             }
         }
     }
-
+    public void filterSensorList(List<Sensor> sensorList) {
+        Iterator<Sensor> iterator = sensorList.iterator();
+        while (iterator.hasNext()) {
+            Sensor sensor = iterator.next();
+            if (sensor == null || sensor.getZeit().isEmpty() || sensor.getCode() == 0) {
+                iterator.remove();
+            }
+        }
+    }
     @Override
     public int getItemCount() {
         return sensorList.size();
+    }
+
+    public void setData(List<Sensor> sensorList) {
+        this.sensorList =  new ArrayList<>(sensorList);
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

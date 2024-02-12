@@ -11,8 +11,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
@@ -25,6 +23,8 @@ import com.example.ibm_heizung.classes.RestService;
 import com.example.ibm_heizung.classes.Sensor;
 import com.example.ibm_heizung.classes.ViewDataController;
 import com.example.ibm_heizung.databinding.ActivityMainBinding;
+import com.example.ibm_heizung.ui.sensors.SensorFragment;
+import com.example.ibm_heizung.ui.sensors.SensorRecyclerViewAdapter;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
@@ -46,11 +46,11 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     private SharedPreferences sharedPreferences;
     private static final String SHARED_PREFS_NAME = "MyAppPrefs";
     private static final String SENSOR_DATA_KEY = "SensorData";
-    private List<Sensor> SensorList;
+    private static final long EXPIRATION_TIME_MS = 1 * 60 * 1000; // 2 Minuten in Millisekunden
+
+    private List<Sensor> sensorList;
     private ViewDataController viewDataController;
-    public List<Sensor> getSensorList() {
-        return SensorList;
-    }
+
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,8 +69,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         });
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
+
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_home, R.id.nav_sensors, R.id.nav_gallery, R.id.nav_slideshow)
                 .setOpenableLayout(drawer)
@@ -78,6 +77,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+
         restService = new RestService();
         viewDataController = new ViewDataController();
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
@@ -87,20 +87,18 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         // Laden der gespeicherten Daten
         loadData();
         if (dataMap.isEmpty()) {
-            FetchData();
+            checkDataValidityAndLoadIfNeeded();
         }
         binding.appBarMain.fab.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 // Hier wird die Methode aufgerufen
-
             }
         });
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
@@ -118,7 +116,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             @Override
             public void run() {
                 if (!isScrollingUp()) {
-                    FetchData();
+                    fetchData();
                 } else {
                     swipeRefreshLayout.setRefreshing(false);
                 }
@@ -126,16 +124,18 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         }, 3000);
     }
 
-    private void FetchData() {
+    private void fetchData() {
         restService.fetchDataFromServer(new RestService.DataCallback() {
             @Override
             public void onDataReceived(Map<String, Sensor> result) {
                 dataMap = result;
                 if (!dataMap.isEmpty()) {
-                    SensorList = new ArrayList<>(dataMap.values());
                     saveData();
                     viewDataController.setDataMap(dataMap);
-                    // Aktualisieren Sie die TextViews in der MainActivity
+                    sensorList = new ArrayList<>(dataMap.values());
+
+
+
                     viewDataController.updateSensorViews(MainActivity.this);
                     swipeRefreshLayout.setRefreshing(false);
                     Toast.makeText(getApplicationContext(), R.string.sensordata_Loaded, Toast.LENGTH_LONG).show();
@@ -145,13 +145,16 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             }
         });
     }
+
     private void saveData() {
         SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putLong("last_update_time", System.currentTimeMillis());
         Gson gson = new Gson();
         String json = gson.toJson(dataMap);
         editor.putString(SENSOR_DATA_KEY, json);
         editor.apply();
     }
+
 
     private void loadData() {
         Gson gson = new Gson();
@@ -164,18 +167,43 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         viewDataController.setDataMap(dataMap);
         viewDataController.updateSensorViews(MainActivity.this);
     }
+
     private boolean isScrollingUp() {
-        // Überprüfen, ob der Bildschirm nach oben gescrollt wurde
         View child = binding.navView.getChildAt(0);
         if (child != null) {
             return child.getScrollY() > 0;
         }
         return false;
     }
+
     @Override
     protected void onResume() {
         super.onResume();
-        // Hier die Datenaktualisierung durchführen, z.B. fetchData()
+        checkDataValidityAndLoadIfNeeded();
+        updateFragment();
+    }
 
+    private void updateFragment() {
+        SensorFragment fragment = (SensorFragment) getSupportFragmentManager().findFragmentById(R.id.sensorlist);
+        if (fragment != null) {
+            fragment.updateAdapterData(sensorList);
+        }
+    }
+    public void checkDataValidityAndLoadIfNeeded() {
+        long lastUpdateTimeMillis = sharedPreferences.getLong("last_update_time", 0);
+        long currentTimeMillis = System.currentTimeMillis();
+        long timeDifferenceMillis = currentTimeMillis - lastUpdateTimeMillis;
+
+        if (lastUpdateTimeMillis == 0 || timeDifferenceMillis > EXPIRATION_TIME_MS) {
+            fetchData();
+            updateFragment();
+        } else {
+            loadData();
+            updateFragment();
+        }
+    }
+    public List<Sensor> getSensorList() {
+        checkDataValidityAndLoadIfNeeded();
+        return sensorList;
     }
 }
