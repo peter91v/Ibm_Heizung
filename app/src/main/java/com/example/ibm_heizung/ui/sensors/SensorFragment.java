@@ -1,5 +1,7 @@
 package com.example.ibm_heizung.ui.sensors;
 
+import static android.content.ContentValues.TAG;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
@@ -21,11 +23,13 @@ import com.example.ibm_heizung.ui.sensors.SensorRecyclerViewAdapter;
 
 import java.util.List;
 
-public class SensorFragment extends Fragment {
+public class SensorFragment extends Fragment{
 
-    private static final String TAG = SensorFragment.class.getSimpleName();
     private static final String ARG_COLUMN_COUNT = "column-count";
     private int mColumnCount = 1;
+
+    public SensorFragment() {
+    }
 
     private RecyclerView recyclerView;
     private SensorRecyclerViewAdapter adapter;
@@ -40,7 +44,7 @@ private List<Sensor> sensorList;
 //        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout2);
 //        swipeRefreshLayout.setOnRefreshListener(this::refreshData);
 
-        Context context = requireContext();
+        Context context = inflater.getContext();
         if (mColumnCount <= 1) {
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
         } else {
@@ -49,7 +53,7 @@ private List<Sensor> sensorList;
 
         MainActivity mainActivity = (MainActivity) requireActivity();
         sensorList = mainActivity.getSensorList();
-        adapter = new SensorRecyclerViewAdapter(context, sensorList);
+        adapter = new SensorRecyclerViewAdapter(sensorList);
         recyclerView.setAdapter(adapter);
 
         return view;
@@ -59,16 +63,17 @@ private List<Sensor> sensorList;
     private void refreshData() {
         Log.d(TAG, "refreshData() called");
 
-        Context context = requireContext();
-        MainActivity mainActivity = (MainActivity) requireActivity();
-        List<Sensor> updatedSensorList = mainActivity.getSensorList();
-        if (updatedSensorList != null) {
-            adapter = new SensorRecyclerViewAdapter(context, updatedSensorList);
-            adapter.setData(updatedSensorList);
-            recyclerView.setAdapter(adapter);
-            adapter.notifyDataSetChanged();
-        }
-
-        swipeRefreshLayout.setRefreshing(false);
+//        Context context = requireContext();
+////        MainActivity mainActivity = (MainActivity) requireActivity();
+////        List<Sensor> updatedSensorList = mainActivity.getSensorList();
+//        if (updatedSensorList != null) {
+//            adapter = new SensorRecyclerViewAdapter(updatedSensorList);
+//            adapter.setData(updatedSensorList);
+//            recyclerView.setAdapter(adapter);
+//            adapter.notifyDataSetChanged();
+//        }
+//
+//        swipeRefreshLayout.setRefreshing(false);
     }
+
 }

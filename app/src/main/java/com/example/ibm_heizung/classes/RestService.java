@@ -1,15 +1,15 @@
 package com.example.ibm_heizung.classes;
 
-import android.app.Service;
 import android.content.Context;
-import android.content.Intent;
-import android.os.IBinder;
+import android.net.ConnectivityManager;
+import android.net.NetworkCapabilities;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import java.util.HashMap;
+import com.example.ibm_heizung.classes.DataObjects.GPIOHead;
+import com.example.ibm_heizung.classes.DataObjects.Sensor;
+
 import java.util.Map;
 
 import retrofit2.Call;
@@ -18,21 +18,46 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class RestService extends Service {
-    private static final String BASE_URL = "http://192.168.178.130:8080/@@ibm.jsonapi/";
+public class RestService {
+    private static final String DEFAULT_BASE_URL = "http://192.168.178.130:8080/@@ibm.jsonapi/";
 
-    private final ApiService apiService;
+    private ApiService apiService;
+    private String baseUrl;
 
-    public RestService() {
+    public RestService(Context context) {
+        determineBaseUrl(context);
+        initializeRetrofit();
+    }
+
+    private void initializeRetrofit() {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
+                .baseUrl(baseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         apiService = retrofit.create(ApiService.class);
     }
 
+    private void determineBaseUrl(Context context) {
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager != null) {
+            NetworkCapabilities capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.getActiveNetwork());
+            NetworkUtils nu = new NetworkUtils();
+            if (capabilities != null) {
+                if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
+
+                    baseUrl = "http://192.168.178.130:8080/@@ibm.jsonapi/"; // WLAN-Verbindung
+                } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
+                    baseUrl = "http://website.secondmed.at/@@ibm.jsonapi/"; // Mobile Datenverbindung
+                }
+            }
+        }
+        if (baseUrl == null) {
+            Log.e("RestService", "No network connection available, using default URL");
+            baseUrl = DEFAULT_BASE_URL;
+        }
+    }
+
     public void fetchDataFromServer(DataCallback callback) {
-        final Map<String, Sensor> dataMap = new HashMap<>();
         Call<Map<String, Sensor>> call = apiService.getSensorDataFromServer();
         call.enqueue(new Callback<Map<String, Sensor>>() {
             @Override
@@ -47,7 +72,7 @@ public class RestService extends Service {
 
             @Override
             public void onFailure(@NonNull Call<Map<String, Sensor>> call, @NonNull Throwable t) {
-                Log.e("RestService", "Fehler beim Abrufen der Daten: " + t.getMessage());
+                Log.e("RestService", "Error fetching data: " + t.getMessage());
             }
         });
     }
@@ -67,14 +92,9 @@ public class RestService extends Service {
 
             @Override
             public void onFailure(@NonNull Call<Map<String, GPIOHead>> call, @NonNull Throwable t) {
-                Log.e("RestService", "Fehler beim Abrufen der GPIO-Daten: " + t.getMessage());
+                Log.e("RestService", "Error fetching GPIO data: " + t.getMessage());
             }
         });
-    }
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        throw new UnsupportedOperationException("Not yet implemented");
     }
 
     public interface DataCallback {

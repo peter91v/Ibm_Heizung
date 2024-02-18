@@ -1,5 +1,6 @@
 package com.example.ibm_heizung;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -21,8 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SensorListActivity extends AppCompatActivity {
-
+public class SensorListActivity extends MainActivity {
     private RecyclerView recyclerViewSensors;
     private RestService restService;
     private Map<String, Sensor> dataMap;
@@ -89,7 +89,7 @@ public class SensorListActivity extends AppCompatActivity {
     }
 
     public void updateSensorList() {
-        SensorRecyclerViewAdapter sensorAdapter = new SensorRecyclerViewAdapter(this, sensorList);
+        SensorRecyclerViewAdapter sensorAdapter = new SensorRecyclerViewAdapter(sensorList);
         recyclerViewSensors.setAdapter(sensorAdapter);
     }
 }

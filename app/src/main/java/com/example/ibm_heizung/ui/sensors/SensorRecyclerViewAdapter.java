@@ -21,10 +21,10 @@ import java.util.List;
 public class SensorRecyclerViewAdapter extends RecyclerView.Adapter<SensorRecyclerViewAdapter.ViewHolder> {
 
     private SensorList sensorList;
-    private Context context;
+//    private Context context;
 
-    public SensorRecyclerViewAdapter(Context context, List<Sensor> sensorList) {
-        this.context = context;
+    public SensorRecyclerViewAdapter(List<Sensor> sensorList) {
+//        this.context = context;
         this.sensorList = new SensorList();
         this.sensorList.setSensorList(sensorList);
         this.sensorList.filterSensorList();

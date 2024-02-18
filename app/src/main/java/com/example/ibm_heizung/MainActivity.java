@@ -2,16 +2,23 @@ package com.example.ibm_heizung;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -22,6 +29,7 @@ import com.example.ibm_heizung.classes.RestService;
 import com.example.ibm_heizung.classes.DataObjects.Sensor;
 import com.example.ibm_heizung.classes.ViewDataController;
 import com.example.ibm_heizung.databinding.ActivityMainBinding;
+import com.example.ibm_heizung.ui.sensors.SensorFragment;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
@@ -34,7 +42,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
+public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, NavigationView.OnNavigationItemSelectedListener {
     private SwipeRefreshLayout swipeRefreshLayout;
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityMainBinding binding;
@@ -49,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     private List<Sensor> sensorList;
     private ViewDataController viewDataController;
 
+    DrawerLayout drawer;
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,11 +69,11 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         setSupportActionBar(binding.appBarMain.toolbar);
         binding.appBarMain.fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show());
-        DrawerLayout drawer = binding.drawerLayout;
+        drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
 
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_sensors, R.id.nav_gallery, R.id.nav_slideshow)
+                R.id.nav_home, R.id.nav_sensors, R.id.nav_gallery, R.id.nav_slideshow, R.id.nav_gpio)
                 .setOpenableLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
@@ -79,7 +88,20 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
         checkDataValidityAndLoadIfNeeded();
     }
-
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        drawer.closeDrawer(GravityCompat.START);
+        if (item.getItemId() == R.id.nav_gpio) {
+            startActivity(new Intent(this, GpioActivity.class));
+            overridePendingTransition(0, 0);
+            return true;
+        } else if (item.getItemId() == R.id.nav_sensors) {
+            startActivity(new Intent(this, SensorListActivity.class));
+            overridePendingTransition(0, 0);
+            return true;
+        }
+        return false;
+    }
     public void checkDataValidityAndLoadIfNeeded() {
         long lastUpdateTimeMillis = sharedPreferences.getLong("last_update_time", 0);
         long currentTimeMillis = System.currentTimeMillis();
@@ -90,31 +112,12 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         } else {
             loadData();
         }
-//        updateFragment();
-    }
-
-//    private void updateFragment() {
-//        SensorFragment fragment = (SensorFragment) getSupportFragmentManager().findFragmentById(R.id.sensorlist);
-//        if (fragment != null) {
-//            fragment.updateAdapterData(sensorList);
-//        }
-//    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    private boolean isScrollingUp() {
-        View child = binding.navView.getChildAt(0);
-        return child != null && child.getScrollY() > 0;
     }
 
     private void loadData() {
         Gson gson = new Gson();
         String json = sharedPreferences.getString(SENSOR_DATA_KEY, "");
-        Type type = new TypeToken<HashMap<String, Sensor>>() {
-        }.getType();
+        Type type = new TypeToken<HashMap<String, Sensor>>() {}.getType();
         dataMap = gson.fromJson(json, type);
         if (dataMap == null) {
             dataMap = new HashMap<>();
@@ -133,6 +136,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         editor.putString(SENSOR_DATA_KEY, json);
         editor.apply();
     }
+
     public void filterSensorList(List<Sensor> sensorList) {
         Iterator<Sensor> iterator = sensorList.iterator();
         while (iterator.hasNext()) {
@@ -142,6 +146,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             }
         }
     }
+
     private void fetchData() {
         restService.fetchDataFromServer(new RestService.DataCallback() {
             @Override
@@ -186,29 +191,14 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
+
+    private boolean isScrollingUp() {
+        View child = binding.navView.getChildAt(0);
+        return child != null && child.getScrollY() > 0;
+    }
+
     public List<Sensor> getSensorList() {
         checkDataValidityAndLoadIfNeeded();
-//        filterSensorList(sensorList);
         return sensorList;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
