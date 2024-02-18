@@ -1,15 +1,14 @@
 package com.example.ibm_heizung.classes;
 
-import android.util.Log;
+import com.example.ibm_heizung.classes.DataObjects.GPIOHead;
+import com.example.ibm_heizung.classes.DataObjects.Sensor;
 
 import java.util.Map;
 
 import retrofit2.Call;
-import retrofit2.http.Body;
 import retrofit2.http.GET;
-import retrofit2.http.POST;
 
-public interface ApiService {
+public interface  ApiService {
     @GET("getmessung")
         //
     Call<Map<String, Sensor>> getSensorDataFromServer();

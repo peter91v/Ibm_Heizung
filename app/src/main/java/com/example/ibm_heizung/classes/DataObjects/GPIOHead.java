@@ -1,4 +1,4 @@
-package com.example.ibm_heizung.classes;
+package com.example.ibm_heizung.classes.DataObjects;
 
 import com.google.gson.annotations.SerializedName;
 

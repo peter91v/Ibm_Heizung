@@ -21,6 +21,8 @@
         android:theme="@style/Theme.Ibm_Heizung"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        android:networkSecurityConfig="@xml/meine_netzwerksicherheit_config"
+   
         <activity
             android:name=".SensorListActivity"
             android:exported="false" />

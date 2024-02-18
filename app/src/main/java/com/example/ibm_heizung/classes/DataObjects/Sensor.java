@@ -1,4 +1,4 @@
-package com.example.ibm_heizung.classes;
+package com.example.ibm_heizung.classes.DataObjects;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -75,5 +75,10 @@ public class Sensor {
         return toString(code);
     }
 
-
+    public boolean isValid() {
+        // Prüfe, ob der Status des Sensors gültig ist (z.B. Status größer als 0)
+        // Prüfe, ob der Grad des Sensors gültig ist (z.B. Grad zwischen 0 und 100)
+        // Füge weitere Prüfungen hinzu, je nach den Gültigkeitskriterien für einen Sensor
+        return  grad >= 0 && grad <= 100;
+    }
 }

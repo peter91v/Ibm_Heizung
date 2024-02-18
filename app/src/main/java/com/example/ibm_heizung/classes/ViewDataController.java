@@ -5,6 +5,7 @@ import android.widget.TextView;
 
 import com.example.ibm_heizung.MainActivity;
 import com.example.ibm_heizung.R;
+import com.example.ibm_heizung.classes.DataObjects.Sensor;
 
 import java.util.HashMap;
 import java.util.Map;
